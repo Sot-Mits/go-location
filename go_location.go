@@ -143,6 +143,35 @@ func (app *App) GetCountry(countryID int) Country {
 	return country
 }
 
+//GetCountry - function to retrieve the country details
+func (app *App) GetCountryByCode(code string) Country {
+	database := app.database
+	defer database.Close()
+
+	statement, err := database.Query("SELECT * FROM countries WHERE code = ?", code)
+
+	checkErr(err)
+
+	var country Country
+
+	defer statement.Close()
+
+	for statement.Next() {
+		err := statement.Scan(&id, &code, &name, &phonecode, &createdAt, &updatedAt)
+
+		checkErr(err)
+
+		country = Country{
+			Id:        id,
+			Code:      code,
+			Name:      name,
+			Phonecode: phonecode,
+		}
+	}
+
+	return country
+}
+
 //GetCity - function to retrieve the city information
 func (app *App) GetCity(cityID int) (*City, error) {
 	database = app.database
@@ -225,8 +254,36 @@ func (app *App) GetCountryStates(countryID int) ([]State, error) {
 	return states, nil
 }
 
-//GetStateCites - function to retrieve the citites that are present within a state
-func (app *App) GetStateCites(stateID int) ([]City, error) {
+//GetCountryCities - function to retrieve the citites that are present within a country
+func (app *App) GetCountryCities(countryID int) ([]City, error) {
+	database = app.database
+
+	statement, err := database.Query("SELECT * FROM cities JOIN states ON cities.state_id = states.state_id WHERE country_id = ?", countryID)
+	if err != nil {
+		return nil, err
+	}
+
+	var cities []City
+
+	for statement.Next() {
+		if err = statement.Scan(&id, &name, &stateId, &createdAt, &updatedAt); err != nil {
+			return nil, err
+		}
+
+		city := City{
+			Id:      id,
+			Name:    name,
+			StateId: stateId,
+		}
+
+		cities = append(cities, city)
+	}
+
+	return cities, nil
+}
+
+//GetStateCities - function to retrieve the citites that are present within a state
+func (app *App) GetStateCities(stateID int) ([]City, error) {
 	database = app.database
 
 	statement, err := database.Query("SELECT * FROM cities WHERE state_id = ?", stateID)

@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	golocation "github.com/ichtrojan/go-location"
+	golocation "github.com/Sot-Mits/go-location"
 )
 
 func main() {

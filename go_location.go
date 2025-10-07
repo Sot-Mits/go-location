@@ -201,6 +201,36 @@ func (app *App) GetCity(cityID int) (*City, error) {
 	return &city, nil
 }
 
+//GetCityFromName - function to retrieve the city information
+func (app *App) GetCityFromName(name string, countryCode string) (*City, error) {
+	database = app.database
+	defer database.Close()
+
+	statement, err := database.Query("SELECT * FROM cities JOIN states ON cities.state_id = states.state_id JOIN countries ON states.country_id = countries.id WHERE cities.name = ? AND country.code = ?", name, countryCode)
+	
+	if err != nil {
+		return nil, err
+	}
+
+	var city City
+
+	defer statement.Close()
+
+	for statement.Next() {
+		if err := statement.Scan(&id, &name, &stateId, &createdAt, &updatedAt); err != nil {
+			return nil, err
+		}
+
+		city = City{
+			Id:      id,
+			Name:    name,
+			StateId: stateId,
+		}
+	}
+
+	return &city, nil
+}
+
 //GetState - Function to retrieve the states information
 func (app *App) GetState(stateID int) (*State, error) {
 	database := app.database

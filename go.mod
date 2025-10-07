@@ -1,4 +1,4 @@
-module github.com/ichtrojan/go-location
+module github.com/Sot-Mits/go-location
 
 go 1.12
 

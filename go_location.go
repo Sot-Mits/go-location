@@ -201,8 +201,8 @@ func (app *App) GetCity(cityID int) (*City, error) {
 	return &city, nil
 }
 
-//GetCityFromName - function to retrieve the city information
-func (app *App) GetCityFromName(name string, countryCode string) (*City, error) {
+//GetCityByName - function to retrieve the city information
+func (app *App) GetCityByName(name string, countryCode string) (*City, error) {
 	database = app.database
 	defer database.Close()
 
